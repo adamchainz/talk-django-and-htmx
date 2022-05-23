@@ -1,0 +1,345 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Django and htmx</title>
+
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/django.css" id="theme">
+
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+<section>
+  <h1>Django and htmx</h1>
+  <h2>Adam Johnson</h2>
+</section>
+
+<section>
+  <h2>🍀 Four part talk</h2>
+  <ol>
+    <li>A brief history of HTML</li>
+    <li>How to use htmx</li>
+    <li>django-htmx</li>
+    <li>htmx versus React &amp;c.</li>
+  </ol>
+</section>
+
+<!--
+  HTML history
+  1. html for documents
+  2. <a> - *hyper*
+  3. forms
+  4. frames, iframes - didn't work out well
+
+  htmx is kind of an alternative to frames - allow swapping arbtirary pieces of the page through a CSS selector, rather than a fixed rectangular window
+-->
+
+<section>
+  <h1>Part One</h1>
+  <h2>🕰 A brief history of HTML 💾</h2>
+  <!-- Also aligns with how you might learn it -->
+</section>
+
+<section>
+  <h2>HTML step 1</h2>
+  <p>📄 Documents</p>
+  <pre><code class="language-html">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;My web page&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Adam’s web site&lt;/h1&gt;
+    &lt;p&gt;👋 &lt;strong&gt;Welcome&lt;/strong&gt; to my web site&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  <p>Look nice, but static.</p>
+</section>
+
+<section>
+  <h2>HTML step 2</h2>
+  <p>🔗 Hyperlinks</p>
+  <pre><code class="language-html">&lt;p&gt;
+  For more information see
+  &lt;a href=https://djangoproject.com&gt;the Django website&lt;/a&gt;
+&lt;/p&gt;</code></pre>
+  <p>We can go places!</p>
+  <p>Puts the “hyper” in “HyperText Markup Language”.</p>
+</section>
+
+<section>
+  <img class="r-stretch" src="img/tim-berners-lee-site.png">
+</section>
+
+<section>
+  <h2>HTML step 3</h2>
+  <p>📝 Forms</p>
+  <pre><code class="language-html">&lt;form method=get action=search&gt;
+  &lt;input name=query placeholder="Search for..."&gt;
+  &lt;button type=submit&gt;Go&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+  <p>We can go to more places, and change things!</p>
+</section>
+
+<section>
+  <p>...but forms are limited. 😪</p>
+  <ul>
+    <li>Limited triggers</li>
+    <li>Require interaction</li>
+    <li>Fixed HTTP verbs</li>
+  </ul>
+</section>
+
+<section>
+  <h2>HTML step 4</h2>
+  <p>🖼 Frames</p>
+  <pre><code class="language-html">&lt;iframe src=/article/123/content/&gt;&lt;/iframe&gt;
+&lt;iframe src=/article/123/comments/&gt;&lt;/iframe&gt;</code></pre>
+  <p>We can reload just part of the page at a time!</p>
+  <p>Links and forms can target frames</p>
+</section>
+
+<section>
+  <img class="r-stretch" src="img/frame-site.png">
+</section>
+
+<section>
+  <p>...but frames suck. 😪</p>
+  <ul>
+    <li>Fixed size rectangles</li>
+    <li>Extra resource consumption</li>
+    <li>Changes restricted to individual frames</li>
+  </ul>
+</section>
+
+<section>
+  <h2>htmx: HTML extended</h2>
+  <pre><code class="language-html">&lt;h3&gt;Latest tweets&lt;/h3&gt;
+&lt;ul id=latest-tweets&gt;
+  &lt;li&gt;use django - @adamchainz&lt;/li&gt;
+&lt;/ul&gt;
+&lt;button hx-get=/latest-tweets/ hx-target=#latest-tweets&gt;
+  Update
+&lt;/button&gt;</code></pre>
+  <p>We can use <em>any</em> event to load content from <em>any</em> URL into <em>any</em> element!</p>
+</section>
+
+<section>
+  <img class="r-stretch" src="img/htmx-front-page.png">
+</section>
+
+<section>
+  <h2>History of htmx</h2>
+  <ul>
+    <li>Started April 2020, Version 1.0.0 November</li>
+    <li>Rewrite of intercooler.js (2013)</li>
+    <li>Alternatives: Unpoly, Hotwire</li>
+  </ul>
+</section>
+
+<!--
+  How to use htmx
+-->
+
+<section>
+  <h1>Part Two</h1>
+  <h2>🤠 How to use htmx 🤷</h2>
+</section>
+
+<section>
+  <h2>We need:</h2>
+  <ul>
+    <li>Web framework: Django, Flask, or really anything</li>
+    <li>htmx script tag</li>
+  </ul>
+  <p>That’s it!</p>
+  <!-- Nothing Python specific - but it lets us use our favourite programming language to build a site -->
+</section>
+
+<section>
+  <h2>htmx setup</h2>
+  <p>Add to any page:</p>
+  <pre><code class="language-html">&lt;script src="{% static 'js/htmx.min.js' %}" defer&gt;&lt;/script&gt;</code></pre>
+  <p>Most projects need no more scripts.</p>
+  <p>Can be used alongside any other scripts/frameworks.</p>
+</section>
+
+<section>
+  <h2>Examples</h2>
+  <p>Many at <a href="https://htmx.org/examples/">htmx.org/examples</a></p>
+  <ol>
+    <li><a href="https://htmx.org/examples/click-to-load/" target="_blank">Click to Load</a></li>
+    <li><a href="https://htmx.org/examples/value-select/" target="_blank">Cascading Selects</a></li>
+    <li><a href="https://htmx.org/examples/active-search/" target="_blank">Active Search</a></li>
+  </ol>
+</section>
+
+
+<section>
+  <h1>Part Three</h1>
+  <h2>🦄 django-htmx 🏷</h2>
+</section>
+
+<section>
+  <h2>Extensions for using Django with htmx</h2>
+  <img class="r-stretch" src="img/django-htmx-star-history.png">
+</section>
+
+<section>
+  <h2><code>HtmxMiddleware</code></h2>
+  <p>Detect requests from htmx:</p>
+  <pre><code class="language-python">def my_view(request):
+    if request.htmx:
+        template_name = "partial.html"
+    else:
+        template_name = "complete.html"
+    return render(template_name, ...)</code></pre>
+</section>
+
+<section>
+  <h2><code>HtmxMiddleware</code></h2>
+  <p>React to the triggering element’s ID:</p>
+  <pre><code class="language-python">def perform_search(request):
+    if request.htmx.trigger == "quick-search":
+        ...
+    else:
+        ...</code></pre>
+</section>
+
+<section>
+  <h2>Extension Script</h2>
+  <p>See Django’s error pages for htmx requests:</p>
+  <pre><code class="language-html">&lt;script src="{% static 'js/htmx.min.js' %}" defer&gt;&lt;/script&gt;
+{% django_htmx_script %}</code></pre>
+</section>
+
+<section>
+  <img class="r-stretch" src="img/django-htmx-error.png">
+</section>
+
+<!--
+  htmx versus React/...
+
+  diagram of form-based workflow
+  diagram of htmx-based
+  diagram of react-based
+-->
+
+<section>
+  <h1>Part Four</h1>
+  <h2>⚖️ htmx versus React &amp;c. ⚛️</h2>
+</section>
+
+<section>
+  <h2>Traditional HTML model</h2>
+  <img class="r-stretch" src="img/model-2004.png">
+  <!--<ol>
+    <li>Request URL</li>
+    <li>Receive HTML response</li>
+    <li>Render HTML</li>
+    <li>User interaction (link, form, ...) ➡️1️⃣</li>
+  </ol>-->
+</section>
+
+<section>
+  <h2>React &amp;c. model</h2>
+  <img class="r-stretch" src="img/model-2019.png">
+  <!--<ol>
+    <li>Request URL</li>
+    <li>Receive HTML response</li>
+    <li>Render HTML</li>
+    <li>User interaction (link, form, ...) ➡️1️⃣</li>
+  </ol>-->
+</section>
+
+<section>
+  <h2>htmx Model</h2>
+  <img class="r-stretch" src="img/model-2021.png">
+  <!--<ol>
+    <li>Request URL</li>
+    <li>Receive JSON response</li>
+    <li>Update local state from JSON</li>
+    <li>Convert state into HTML (complex)</li>
+    <li>Render HTML</li>
+    <li>User interaction (link, form, ...) ➡️(1️⃣ or 3️⃣)</li>
+  </ol>-->
+</section>
+
+<section>
+  <table>
+    <thead>
+      <tr>
+        <th>htmx &amp;c.</th>
+        <th>React &amp;c.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Websites</td>
+        <td>“Applications”</td>
+      </tr>
+      <tr>
+        <td>Small teams</td>
+        <td>Huge teams</td>
+      </tr>
+      <tr>
+        <td>Any language</td>
+        <td>JavaScript</td>
+      </tr>
+      <tr>
+        <td>Additive</td>
+        <td>Prescriptive</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h1>Thank you! 🤗</h1>
+  <ul>
+    <li>Adam Johnson</li>
+    <li>@adamchainz on GitHub &amp; Twitter</li>
+    <li>me@adamj.eu</li>
+    <li><a href="https://github.com/adamchainz/talk-django-and-htmx">github.com/adamchainz/talk-django-and-htmx</a></li>
+  </ul>
+</section>
+
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+          hash: true,
+
+          controls: false,
+          center: true,
+          progress: false,
+
+          // Learn about plugins: https://revealjs.com/plugins/
+          plugins: [ RevealHighlight ]
+      });
+    </script>
+  </body>
+</html>
